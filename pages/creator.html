@@ -1,0 +1,195 @@
+<!-- About Editor page: presents the editor's identity and interests as a centered typographic word clump. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Metadata supports direct access and a well-sized mobile iframe view. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="About the editor through a collection of personal qualities, interests, and languages.">
+    <title>About Editor</title>
+    <!-- The shared stylesheet gives the creator profile the same design as the card pages. -->
+    <link rel="stylesheet" href="card-page.css">
+  </head>
+  <body data-page="creator">
+    <!-- Center the byline and arrange the requested keywords into an accessible word-clump list. -->
+    <main class="card-page creator-page">
+      <p class="card-page__eyebrow">Made with imagination</p>
+      <ul class="creator-cloud" aria-label="Editor qualities, interests, languages, and personal mottoes">
+        <li class="creator-cloud__word creator-cloud__word--large">High self-esteem</li>
+        <li class="creator-cloud__word creator-cloud__word--medium creator-cloud__word--tilt-left"><span>Intelligent</span></li>
+        <li class="creator-cloud__word creator-cloud__word--medium creator-cloud__word--tilt-right"><span>Imaginary</span></li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Not hard-working</li>
+        <li class="creator-cloud__word creator-cloud__word--small">caring for younger brothers and younger sisters</li>
+        <li class="creator-cloud__word creator-cloud__word--small creator-cloud__word--tilt-left"><span>human</span></li>
+        <li class="creator-cloud__word creator-cloud__word--small creator-cloud__word--tilt-right"><span>male</span></li>
+        <li class="creator-cloud__word creator-cloud__word--medium">23 years old</li>
+        <li class="creator-cloud__word creator-cloud__word--medium creator-cloud__word--tilt-left"><span>musical</span></li>
+        <li class="creator-cloud__name">JAWON PARK</li>
+        <li class="creator-cloud__word creator-cloud__word--small">listener</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">advisor</li>
+        <li class="creator-cloud__word creator-cloud__word--small">christian</li>
+        <li class="creator-cloud__word creator-cloud__word--medium creator-cloud__word--tilt-left"><span>English Speaker</span></li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Korean Speaker</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Mandarin Speaker</li>
+        <li class="creator-cloud__word creator-cloud__word--small">Japanese Learner</li>
+        <li class="creator-cloud__word creator-cloud__word--small">French Learner</li>
+        <li class="creator-cloud__word creator-cloud__word--large">Love Science</li>
+        <li class="creator-cloud__word creator-cloud__word--medium creator-cloud__word--tilt-right"><span>INFP</span></li>
+        <li class="creator-cloud__word creator-cloud__word--small">otrovert</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Programmer</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Translator</li>
+        <li class="creator-cloud__word creator-cloud__word--small">APU Student</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">Anytime Anywhere</li>
+        <li class="creator-cloud__word creator-cloud__word--large">Listen more, talk less</li>
+        <li class="creator-cloud__word creator-cloud__word--medium">there is 2 years for a reason</li>
+        <li class="creator-cloud__word creator-cloud__word--large">Knowledge is power only for me</li>
+      </ul>
+    </main>
+    <!-- Shared keyboard handler keeps the enclosing dialog dismissible and keyboard-trapped. -->
+    <script>
+      // Translate each descriptor into a shuffled, balanced mix of the six requested languages.
+      const translations = {
+        "High self-esteem": ["높은 자존감", "Haute estime de soi", "高自尊", "高い自己肯定感", "Alta autoestima", "Hoog zelfbeeld"],
+        Intelligent: ["똑똑한", "Intelligent", "聰明", "知的", "Inteligente", "Intelligent"],
+        Imaginary: ["상상력이 풍부한", "Imaginatif", "富有想像力", "想像力豊かな", "Imaginativo", "Fantasierijk"],
+        "Not hard-working": ["그다지 부지런하지 않은", "Pas très travailleur", "不太勤奮", "あまり勤勉ではない", "Poco trabajador", "Niet erg hardwerkend"],
+        "caring for younger bros and sis'": ["어린 동생들을 챙김", "Prend soin de ses jeunes frères et sœurs", "照顧年幼的弟弟妹妹", "年下のきょうだいを大切にする", "Cuida de sus hermanos menores", "Zorgt voor jongere broers en zussen"],
+        human: ["인간", "Humain", "人類", "人間", "Humano", "Mens"],
+        male: ["남성", "Homme", "男性", "男性", "Hombre", "Man"],
+        "23 y/o": ["23세", "23 ans", "23歲", "23歳", "23 años", "23 jaar"],
+        musical: ["음악적인", "Musical", "熱愛音樂", "音楽好き", "Musical", "Muzikaal"],
+        listener: ["경청자", "À l'écoute", "傾聽者", "聞き上手", "Buen oyente", "Goede luisteraar"],
+        advisor: ["조언자", "Conseiller", "顧問", "アドバイザー", "Consejero", "Adviseur"],
+        christian: ["기독교인", "Chrétien", "基督徒", "キリスト教徒", "Cristiano", "Christen"],
+        English: ["영어", "Anglais", "英語", "英語", "Inglés", "Engels"],
+        Korean: ["한국어", "Coréen", "韓語", "韓国語", "Coreano", "Koreaans"],
+        Mandarin: ["중국어(보통화)", "Mandarin", "國語", "普通話", "Mandarín", "Mandarijn"],
+        "Japanese Learner": ["일본어 학습자", "Apprenant de japonais", "日語學習者", "日本語学習者", "Estudiante de japonés", "Leerling Japans"],
+        "French Learner": ["프랑스어 학습자", "Apprenant de français", "法語學習者", "フランス語学習者", "Estudiante de francés", "Leerling Frans"],
+        "Love Science": ["과학을 사랑함", "Aime les sciences", "熱愛科學", "科学が好き", "Ama la ciencia", "Houdt van wetenschap"],
+        INFP: ["INFP", "INFP", "INFP", "INFP", "INFP", "INFP"],
+        otrovert: ["오트로버트", "Otrovert", "外向內省者", "オトロバート", "Otrovertido", "Otrovert"],
+        Programmer: ["프로그래머", "Programmeur", "程式設計師", "プログラマー", "Programador", "Programmeur"],
+        Translator: ["번역가", "Traducteur", "翻譯者", "翻訳者", "Traductor", "Vertaler"],
+        "APU Student": ["APU 학생", "Étudiant à l'APU", "APU學生", "APUの学生", "Estudiante de APU", "APU-student"],
+        "Anytime Anywhere": ["언제 어디서나", "N'importe quand, n'importe où", "隨時隨地", "いつでもどこでも", "En cualquier momento y lugar", "Altijd en overal"],
+        "Listen more, talk less": ["더 많이 듣고, 덜 말하기", "Écouter davantage, parler moins", "多聽少說", "よく聞き、あまり話さない", "Escuchar más, hablar menos", "Meer luisteren, minder praten"],
+        "there is 2 years for a reason": ["2년에는 이유가 있어", "Ces deux années ont une raison d'être", "兩年自有其原因", "2年には理由がある", "Hay una razón para estos dos años", "Er is een reden voor die twee jaar"],
+        "Knowledge is power only for me": ["지식은 나에게만 힘이다", "Le savoir n'est un pouvoir que pour moi", "知識只對我有力量", "知識は自分にとってのみ力", "El conocimiento solo es poder para mí", "Kennis is alleen macht voor mij"]
+      };
+      const languageCodes = ["ko", "fr", "zh-Hant", "ja", "es", "nl"];
+      const words = [...document.querySelectorAll(".creator-cloud__word")];
+      const languagePool = languageCodes.flatMap((language, index) =>
+        Array.from({ length: index < words.length % languageCodes.length ? 5 : 4 }, () => language)
+      );
+
+      for (let index = languagePool.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [languagePool[index], languagePool[swapIndex]] = [languagePool[swapIndex], languagePool[index]];
+      }
+
+      words.forEach((word, index) => {
+        const content = word.querySelector("span") || word;
+        const originalText = content.textContent.trim();
+        const languageIndex = languageCodes.indexOf(languagePool[index]);
+        content.textContent = translations[originalText][languageIndex];
+        content.lang = languagePool[index];
+      });
+
+      // Shuffle the descriptors before positioning them around the fixed, centered name.
+      const name = document.querySelector(".creator-cloud__name");
+      for (let index = words.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [words[index], words[swapIndex]] = [words[swapIndex], words[index]];
+      }
+
+      words.forEach((word) => word.remove());
+      name.after(...words);
+
+      // Pack varied phrase sizes into a loose oval around the name without collisions.
+      function packWordCloud() {
+        const cloud = document.querySelector(".creator-cloud");
+        const isWideLayout = window.innerWidth > 600;
+        cloud.classList.toggle("is-packed", isWideLayout);
+
+        words.forEach((word) => {
+          word.style.left = "";
+          word.style.top = "";
+          word.style.transform = "";
+        });
+        name.style.left = "";
+        name.style.top = "";
+        name.style.transform = "";
+
+        if (!isWideLayout) return;
+
+        const cloudWidth = cloud.clientWidth;
+        const cloudHeight = cloud.clientHeight;
+        const centerX = cloudWidth / 2;
+        const centerY = cloudHeight / 2;
+        const nameWidth = name.offsetWidth;
+        const nameHeight = name.offsetHeight;
+        name.style.left = `${centerX}px`;
+        name.style.top = `${centerY}px`;
+        name.style.transform = "translate(-50%, -50%)";
+
+        const occupied = [{
+          left: centerX - nameWidth / 2,
+          right: centerX + nameWidth / 2,
+          top: centerY - nameHeight / 2,
+          bottom: centerY + nameHeight / 2
+        }];
+        const placementOrder = [...words].sort((first, second) =>
+          second.offsetWidth * second.offsetHeight - first.offsetWidth * first.offsetHeight
+        );
+
+        placementOrder.forEach((word) => {
+          const angle = word.classList.contains("creator-cloud__word--tilt-left")
+            ? -90
+            : word.classList.contains("creator-cloud__word--tilt-right") ? 90 : 0;
+          const width = angle ? word.offsetHeight : word.offsetWidth;
+          const height = angle ? word.offsetWidth : word.offsetHeight;
+          const inset = 0;
+          const radiusX = (cloudWidth - width) / 2 - inset;
+          const radiusY = (cloudHeight - height) / 2 - inset;
+          let placement = null;
+
+          word.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+          for (let attempt = 0; attempt < 1600; attempt += 1) {
+            const theta = Math.random() * Math.PI * 2;
+            const radius = Math.sqrt(Math.random());
+            const x = centerX + Math.cos(theta) * radius * radiusX;
+            const y = centerY + Math.sin(theta) * radius * radiusY;
+            const box = {
+              left: x - width / 2 - inset,
+              right: x + width / 2 + inset,
+              top: y - height / 2 - inset,
+              bottom: y + height / 2 + inset
+            };
+            const collides = occupied.some((other) =>
+              box.left < other.right &&
+              box.right > other.left &&
+              box.top < other.bottom &&
+              box.bottom > other.top
+            );
+
+            if (!collides) {
+              placement = { x, y, box };
+              break;
+            }
+          }
+
+          if (placement) {
+            word.style.left = `${placement.x}px`;
+            word.style.top = `${placement.y}px`;
+            occupied.push(placement.box);
+          }
+        });
+      }
+
+      packWordCloud();
+      window.addEventListener("resize", packWordCloud);
+    </script>
+    <script src="card-page.js"></script>
+  </body>
+</html>

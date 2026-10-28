@@ -1,0 +1,787 @@
+<!-- Welcome page: this document provides the multilingual landing screen and its shared expanded-content dialog. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Browser metadata identifies the page and keeps its layout responsive. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#11131b">
+    <meta name="description" content="A small interactive welcome page by Jawon Park.">
+    <title>Welcome — Jawon Park</title>
+    <!-- Page styles define the glowing backdrop, responsive cards, footer, and animated dialog. -->
+    <style>
+      /* Shared color tokens and browser defaults set the site's dark visual theme. */
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        --ink: #11131b;
+        --paper: #f7f5f0;
+        --muted: #b7b7c1;
+        --line: rgb(255 255 255 / 15%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        color: var(--paper);
+        background:
+          radial-gradient(ellipse at 18% 18%, rgb(167 94 118 / 38%), transparent 34rem),
+          radial-gradient(ellipse at 83% 25%, rgb(79 128 144 / 36%), transparent 32rem),
+          radial-gradient(ellipse at 55% 88%, rgb(161 127 78 / 30%), transparent 34rem),
+          #11131b;
+      }
+
+      /* Blurred radial layers create the softly glowing background without obscuring text. */
+      body::before {
+        position: fixed;
+        z-index: -1;
+        inset: -15%;
+        background:
+          radial-gradient(ellipse at 35% 45%, rgb(166 88 104 / 38%), transparent 29%),
+          radial-gradient(ellipse at 69% 39%, rgb(74 126 146 / 36%), transparent 31%),
+          radial-gradient(ellipse at 57% 77%, rgb(158 125 73 / 31%), transparent 29%);
+        content: "";
+        filter: blur(82px) saturate(.72);
+        pointer-events: none;
+      }
+
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      button:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 5px;
+      }
+
+      /* The landing page centers its introduction and cards between the masthead and footer. */
+      .page {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        padding: 34px clamp(22px, 6vw, 88px) 24px;
+      }
+
+      .masthead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        color: rgb(255 255 255 / 72%);
+        font-size: .73rem;
+        font-weight: 650;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+
+      .masthead__mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .masthead__dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e8c99a;
+        box-shadow: 0 0 17px rgb(232 201 154 / 85%);
+      }
+
+      main {
+        display: flex;
+        width: min(100%, 1280px);
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-self: center;
+        padding: clamp(52px, 9vh, 100px) 0 clamp(56px, 10vh, 104px);
+      }
+
+      .intro {
+        margin-bottom: clamp(46px, 8vh, 82px);
+        text-align: center;
+      }
+
+      .intro__eyebrow {
+        margin: 0 0 16px;
+        color: rgb(255 255 255 / 67%);
+        font-size: .75rem;
+        font-weight: 650;
+        letter-spacing: .25em;
+        text-transform: uppercase;
+      }
+
+      .intro__title {
+        margin: 0;
+        color: #fbf8f1;
+        font-size: clamp(4.5rem, 12vw, 10.5rem);
+        font-weight: 780;
+        letter-spacing: -.085em;
+        line-height: .9;
+        -webkit-text-stroke: 2px #08090d;
+        text-shadow: 0 12px 50px rgb(0 0 0 / 35%);
+      }
+
+      .intro__translations {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 9px 20px;
+        margin: 27px auto 0;
+        color: rgb(255 255 255 / 77%);
+        font-size: clamp(.8rem, 1.3vw, 1rem);
+        letter-spacing: .035em;
+      }
+
+      .intro__translations span + span::before {
+        margin-right: 20px;
+        color: rgb(255 255 255 / 36%);
+        content: "·";
+      }
+
+      /* Four equal cards become a two-column grid at tablet widths. */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        position: relative;
+        display: flex;
+        min-height: 174px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px 21px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: linear-gradient(145deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 4%));
+        text-align: left;
+        cursor: pointer;
+        transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+      }
+
+      .card:hover,
+      .card:focus-visible {
+        z-index: 1;
+        transform: translateY(-7px) scale(1.035);
+        border-color: rgb(255 255 255 / 47%);
+        background: linear-gradient(145deg, rgb(255 255 255 / 17%), rgb(255 255 255 / 7%));
+        box-shadow: 0 18px 45px rgb(0 0 0 / 22%);
+      }
+
+      .card__number {
+        margin-bottom: auto;
+        color: rgb(255 255 255 / 50%);
+        font-size: .68rem;
+        letter-spacing: .12em;
+      }
+
+      .card__title {
+        margin: 20px 0 6px;
+        font-size: 1.05rem;
+        font-weight: 620;
+        letter-spacing: -.02em;
+      }
+
+      .card__sample {
+        margin: 0;
+        color: rgb(255 255 255 / 67%);
+        font-size: .8rem;
+        line-height: 1.5;
+      }
+
+      .card__arrow {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: rgb(255 255 255 / 65%);
+        font-size: 1.1rem;
+        transition: transform 220ms ease;
+      }
+
+      .card:hover .card__arrow,
+      .card:focus-visible .card__arrow {
+        transform: translate(3px, -3px);
+      }
+
+      /* Footer actions remain visible below the main content and respond to activation. */
+      .footer {
+        display: flex;
+        min-height: 54px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 17px;
+        border: 1px solid rgb(255 255 255 / 9%);
+        background: rgb(255 255 255 / 20%);
+        color: #fff;
+      }
+
+      .footer__button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 4px 9px;
+        border: 0;
+        border-radius: 3px;
+        background: transparent;
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .035em;
+        cursor: pointer;
+        transition: transform 180ms ease, background 180ms ease;
+      }
+
+      .footer__button:hover,
+      .footer__button:focus-visible {
+        background: rgb(255 255 255 / 10%);
+      }
+
+      .footer__button.is-pressed {
+        transform: scale(1.2);
+      }
+
+      /* A dimmed backdrop and centered dialog provide the shared expanded-page surface. */
+      .dialog-backdrop {
+        position: fixed;
+        z-index: 5;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgb(4 5 10 / 78%);
+        backdrop-filter: blur(9px);
+        inset: 0;
+        opacity: 1;
+        transition: opacity 260ms ease;
+      }
+
+      .dialog-backdrop[hidden] {
+        display: none;
+      }
+
+      .dialog-backdrop.is-closing {
+        opacity: 0;
+      }
+
+      .dialog {
+        position: relative;
+        display: flex;
+        width: 85vw;
+        height: 85vh;
+        min-height: 380px;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid rgb(255 255 255 / 22%);
+        border-radius: 7px;
+        background:
+          radial-gradient(ellipse at 80% 10%, rgb(80 131 147 / 23%), transparent 55%),
+          radial-gradient(ellipse at 10% 100%, rgb(166 91 112 / 24%), transparent 55%),
+          #171922;
+        box-shadow: 0 32px 100px rgb(0 0 0 / 55%);
+        animation: dialog-arrive 570ms cubic-bezier(.2, .8, .2, 1) both;
+      }
+
+      .dialog-backdrop.is-closing .dialog {
+        animation: dialog-leave 240ms ease both;
+      }
+
+      .dialog__close {
+        position: absolute;
+        top: 50%;
+        right: 22px;
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid rgb(255 255 255 / 22%);
+        border-radius: 50%;
+        background: rgb(255 255 255 / 5%);
+        font-size: 1.5rem;
+        line-height: 1;
+        padding: 0;
+        translate: 0 -50%;
+        transform: rotate(0deg);
+        transform-origin: 50% 50%;
+        cursor: pointer;
+        transition: background 180ms ease, transform 180ms ease;
+      }
+
+      .dialog__close:hover {
+        transform: rotate(90deg);
+        background: rgb(255 255 255 / 14%);
+      }
+
+      /* Chemistry tabs share the dialog header and retain their individual accent colors. */
+      .dialog__eyebrow {
+        min-width: 0;
+        margin: 0;
+        overflow: hidden;
+        color: #e8c99a;
+        font-size: .75rem;
+        font-weight: 650;
+        letter-spacing: .2em;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .dialog__header {
+        position: relative;
+        z-index: 4;
+        display: flex;
+        min-height: 74px;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 18px;
+        padding: 10px 72px 10px clamp(22px, 5vw, 64px);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
+        background: rgb(23 25 34 / 94%);
+      }
+
+      .dialog__eyebrow {
+        flex: 0 0 190px;
+      }
+
+      .dialog__tabs {
+        display: none;
+        min-width: 0;
+        flex: 1;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .dialog.has-chemistry-tabs .dialog__tabs {
+        display: flex;
+      }
+
+      .dialog__tab {
+        min-width: 0;
+        flex: 1;
+        min-height: 36px;
+        padding: 6px 17px;
+        border: 1px solid color-mix(in srgb, var(--tab-color) 45%, transparent);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--tab-color) 9%, transparent);
+        color: color-mix(in srgb, var(--tab-color) 78%, white);
+        font: inherit;
+        font-size: .73rem;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+      }
+
+      .dialog__tab:nth-child(1) { --tab-color: #8bc7eb; }
+      .dialog__tab:nth-child(2) { --tab-color: #e98a7f; }
+      .dialog__tab:nth-child(3) { --tab-color: #a993eb; }
+      .dialog__tab:nth-child(4) { --tab-color: #85c89b; }
+
+      .dialog__tab:hover,
+      .dialog__tab:focus-visible {
+        border-color: var(--tab-color);
+        background: color-mix(in srgb, var(--tab-color) 20%, transparent);
+        color: #fff;
+      }
+
+      .dialog__tab[aria-current="page"] {
+        border-color: var(--tab-color);
+        background: color-mix(in srgb, var(--tab-color) 20%, transparent);
+        color: var(--tab-color);
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .dialog__tab:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+
+      .dialog__content {
+        width: 100%;
+        min-height: 0;
+        flex: 1;
+        border: 0;
+        background: #171922;
+      }
+
+      /* Dialog entrance and exit preserve a short scale-and-fade transition. */
+      .dialog__sample {
+        max-width: 620px;
+        margin: 26px 0 0;
+        color: rgb(255 255 255 / 75%);
+        font-size: clamp(1rem, 1.7vw, 1.25rem);
+        line-height: 1.8;
+      }
+
+      @keyframes dialog-arrive {
+        from {
+          transform: translateY(28px) scale(.88);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes dialog-leave {
+        to {
+          transform: translateY(18px) scale(.94);
+          opacity: 0;
+        }
+      }
+
+      /* Tablet rules reorganize the landing content without changing the card order. */
+      @media (max-width: 760px) {
+        .page {
+          padding: 25px 22px 18px;
+        }
+
+        main {
+          padding: 68px 0 70px;
+        }
+
+        .cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+          min-height: 158px;
+        }
+      }
+
+      @media (max-width: 440px) {
+        .masthead {
+          font-size: .63rem;
+        }
+
+        .intro__title {
+          font-size: clamp(4.3rem, 21vw, 6.5rem);
+        }
+
+        .cards {
+          gap: 10px;
+        }
+
+        .card {
+          min-height: 150px;
+          padding: 17px 15px;
+        }
+
+        .card__arrow {
+          top: 15px;
+          right: 14px;
+        }
+
+        .dialog {
+          width: 92vw;
+          height: min(82vh, 700px);
+          min-height: 360px;
+        }
+
+        .dialog__close {
+          top: 14px;
+          right: 14px;
+        }
+
+        .dialog__header {
+          gap: 10px;
+          padding-left: 18px;
+        }
+
+        .dialog__eyebrow {
+          flex-basis: 150px;
+          font-size: .65rem;
+        }
+
+        .dialog__tab {
+          padding: 6px 10px;
+          font-size: .65rem;
+        }
+      }
+
+      /* Small screens make the dialog full-page and stack its title above the tabs. */
+      @media (max-width: 600px) {
+        .dialog-backdrop {
+          padding: 0;
+        }
+
+        .dialog {
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          min-height: 0;
+          border: 0;
+          border-radius: 0;
+        }
+
+        .dialog__header {
+          min-height: 94px;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          padding: 9px 10px;
+        }
+
+        .dialog__eyebrow {
+          width: calc(100% - 50px);
+          max-width: calc(100% - 50px);
+          flex: 0 0 auto;
+          font-size: .58rem;
+        }
+
+        .dialog__tabs {
+          width: 100%;
+          gap: 4px;
+        }
+
+        .dialog__tab {
+          min-width: 0;
+          min-height: 31px;
+          flex: 1;
+          overflow: hidden;
+          padding: 5px 3px;
+          font-size: .53rem;
+          text-overflow: ellipsis;
+        }
+
+        .dialog__close {
+          display: none;
+        }
+      }
+
+      /* Reduce animation for visitors who have requested less motion in system settings. */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Landing layout: the masthead, title, translations, four cards, and credits form the main screen. -->
+    <div class="page">
+      <header class="masthead">
+        <span class="masthead__mark"><span class="masthead__dot" aria-hidden="true"></span> Imaginary things happen</span>
+        <span>Take a moment · Explore</span>
+      </header>
+
+      <main>
+        <!-- Welcome headline and requested translations are kept visible above the cards. -->
+        <section class="intro" aria-labelledby="welcome-title">
+          <p class="intro__eyebrow">Dream</p>
+          <h1 class="intro__title" id="welcome-title">Welcome</h1>
+          <p class="intro__translations" aria-label="Welcome in Korean, French, Traditional Chinese, Japanese, Spanish, and Dutch">
+            <span lang="ko">환영합니다</span>
+            <span lang="fr">Bienvenue</span>
+            <span lang="zh-Hant">歡迎</span>
+            <span lang="ja">ようこそ</span>
+            <span lang="es">Bienvenidos</span>
+            <span lang="nl">Welkom</span>
+          </p>
+        </section>
+
+        <!-- Each card opens its own annotated HTML page inside the shared animated dialog. -->
+        <section class="cards" aria-label="Explore the welcome page">
+          <button class="card" type="button" data-page="pages/elemental.html" data-title="01 / Elemental">
+            <span class="card__number">01 / ELEMENTAL</span>
+            <span class="card__title">Creation of all things</span>
+            <span class="card__sample">Wonder of creations</span>
+            <span class="card__arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="card" type="button" data-page="pages/dream.html" data-title="02 / Dream">
+            <span class="card__number">02 / DREAM</span>
+            <span class="card__title">Find your rhythm</span>
+            <span class="card__sample">Take it one moment at a time.</span>
+            <span class="card__arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="card" type="button" data-page="pages/wonder.html" data-title="03 / Wonder">
+            <span class="card__number">03 / WONDER</span>
+            <span class="card__title">Stay curious</span>
+            <span class="card__sample">There’s always more to discover.</span>
+            <span class="card__arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="card" type="button" data-page="pages/create.html" data-title="04 / Create">
+            <span class="card__number">04 / CREATE</span>
+            <span class="card__title">Make it yours</span>
+            <span class="card__sample">Your story starts right here.</span>
+            <span class="card__arrow" aria-hidden="true">↗</span>
+          </button>
+        </section>
+      </main>
+
+      <!-- Footer actions open the creator page or animate the year button. -->
+      <footer class="footer" aria-label="Page credits">
+        <button class="footer__button" type="button" data-page="pages/creator.html" data-title="About Editor">About Editor</button>
+        <button class="footer__button" type="button">2026</button>
+      </footer>
+    </div>
+
+    <!-- Modal shell dims the page, hosts a distinct HTML page, and can be closed from keyboard or pointer. -->
+    <div class="dialog-backdrop" id="dialog-backdrop" hidden>
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+        <header class="dialog__header">
+          <h2 class="dialog__eyebrow" id="dialog-title"></h2>
+          <nav class="dialog__tabs" aria-label="Chemistry pages">
+            <button class="dialog__tab" type="button" data-page="elemental">Periodic table</button>
+            <button class="dialog__tab" type="button" data-page="ionic">Ionic bond</button>
+            <button class="dialog__tab" type="button" data-page="covalent">Covalent bond</button>
+            <button class="dialog__tab" type="button" data-page="metallic">Metallic bond</button>
+          </nav>
+          <button class="dialog__close" type="button" aria-label="Close dialog">×</button>
+        </header>
+        <iframe class="dialog__content" id="dialog-content" title="Expanded card content"></iframe>
+      </section>
+    </div>
+
+    <!-- Dialog script selects the requested page, manages dismissal, and restores keyboard focus. -->
+    <script>
+      const backdrop = document.querySelector("#dialog-backdrop");
+      const dialogTitle = document.querySelector("#dialog-title");
+      const dialogContent = document.querySelector("#dialog-content");
+      const dialog = document.querySelector(".dialog");
+      const dialogTabs = [...document.querySelectorAll(".dialog__tab")];
+      const closeButton = document.querySelector(".dialog__close");
+      const chemistryPages = new Set(["elemental", "ionic", "covalent", "metallic"]);
+      const pages = {
+        elemental: ["pages/elemental.html", "01 / ELEMENTAL"],
+        ionic: ["pages/ionic.html", "02 / IONIC BOND"],
+        covalent: ["pages/covalent.html", "03 / COVALENT BOND"],
+        metallic: ["pages/metallic.html", "04 / METALLIC BOND"]
+      };
+      let previouslyFocused = null;
+      let closeTimer;
+
+      // Load a registered dialog page and synchronize the title, tabs, and chemistry header state.
+      function navigateToPage(pageId) {
+        if (!Object.hasOwn(pages, pageId)) return;
+        const [path, title] = pages[pageId];
+        dialogTitle.textContent = chemistryPages.has(pageId) ? pages.elemental[1] : title;
+        dialogContent.src = path;
+        dialog.classList.toggle("has-chemistry-tabs", chemistryPages.has(pageId));
+        dialogTabs.forEach((tab) => {
+          if (tab.dataset.page === pageId) tab.setAttribute("aria-current", "page");
+          else tab.removeAttribute("aria-current");
+        });
+      }
+
+      // Open the shared dialog for a card or footer action and remember where focus should return.
+      function openDialog(trigger) {
+        window.clearTimeout(closeTimer);
+        previouslyFocused = trigger;
+        const initialChemistryPage = Object.entries(pages)
+          .find(([, [path]]) => path === trigger.dataset.page)?.[0];
+        if (initialChemistryPage) navigateToPage(initialChemistryPage);
+        else {
+          dialogTitle.textContent = trigger.dataset.title;
+          dialogContent.src = trigger.dataset.page;
+          dialog.classList.remove("has-chemistry-tabs");
+          dialogTabs.forEach((tab) => tab.removeAttribute("aria-current"));
+        }
+        backdrop.hidden = false;
+        backdrop.classList.remove("is-closing");
+        document.body.style.overflow = "hidden";
+        closeButton.focus();
+      }
+
+      // Animate the dialog closed, restore page scrolling, then return focus to its opener.
+      function closeDialog() {
+        if (backdrop.hidden || backdrop.classList.contains("is-closing")) return;
+        backdrop.classList.add("is-closing");
+        document.body.style.overflow = "";
+        closeTimer = window.setTimeout(() => {
+          backdrop.hidden = true;
+          backdrop.classList.remove("is-closing");
+          previouslyFocused?.focus();
+        }, 240);
+      }
+
+      // Route each expanded card and the creator credit through the common dialog shell.
+      document.querySelectorAll(".card, .footer__button[data-page]").forEach((trigger) => {
+        trigger.addEventListener("click", () => openDialog(trigger));
+      });
+
+      closeButton.addEventListener("click", closeDialog);
+      // Change lesson iframe content from the persistent chemistry navigation.
+      dialogTabs.forEach((tab) => {
+        tab.addEventListener("click", () => navigateToPage(tab.dataset.page));
+      });
+      backdrop.addEventListener("click", (event) => {
+        if (event.target === backdrop) closeDialog();
+      });
+
+      // Escape dismisses the modal; Tab is contained within its header and active iframe.
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeDialog();
+        if (event.key === "Tab" && !backdrop.hidden) {
+          if (dialog.classList.contains("has-chemistry-tabs")) {
+            const activeTabIndex = dialogTabs.indexOf(document.activeElement);
+            if (document.activeElement === closeButton && !event.shiftKey) {
+              event.preventDefault();
+              dialogTabs[0].focus();
+              return;
+            }
+            if (activeTabIndex >= 0) {
+              if (event.shiftKey && activeTabIndex === 0) {
+                event.preventDefault();
+                closeButton.focus();
+              } else if (!event.shiftKey && activeTabIndex === dialogTabs.length - 1) {
+                event.preventDefault();
+                const firstFrameControl = [...dialogContent.contentDocument.querySelectorAll(
+                  'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+                )].find((element) => element.getClientRects().length > 0);
+                (firstFrameControl || dialogContent).focus();
+              }
+              return;
+            }
+          }
+          event.preventDefault();
+          const focusableContent = [...dialogContent.contentDocument.querySelectorAll(
+            'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+          )].filter((element) => element.getClientRects().length > 0);
+          const nextTarget = event.shiftKey ? focusableContent.at(-1) : focusableContent[0];
+          (nextTarget || dialogContent).focus();
+        }
+      });
+
+      // Only accept keyboard requests from the page currently framed in this dialog.
+      // Child pages use these messages to dismiss, return focus, or switch lessons.
+      window.addEventListener("message", (event) => {
+        if (event.source !== dialogContent.contentWindow) return;
+        if (event.data?.type === "welcome:close") closeDialog();
+        if (event.data?.type === "welcome:focus-close") closeButton.focus();
+        if (event.data?.type === "welcome:navigate") {
+          if (typeof event.data.page !== "string") return;
+          navigateToPage(event.data.page);
+        }
+      });
+
+      // Give both footer actions the same brief pressed-scale feedback on click.
+      document.querySelectorAll(".footer__button").forEach((button) => {
+        button.addEventListener("click", () => {
+          button.classList.remove("is-pressed");
+          window.requestAnimationFrame(() => button.classList.add("is-pressed"));
+          window.setTimeout(() => button.classList.remove("is-pressed"), 220);
+        });
+      });
+    </script>
+  </body>
+</html>
