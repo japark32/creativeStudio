@@ -1,0 +1,461 @@
+/* Spirit page styles: book stacks, chapter reader, scripture, and responsive behavior. */
+
+/* The Spirit library keeps both testament stacks visible beside a centered chapter reader. */
+.spirit-page {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.45fr) minmax(220px, 1fr);
+  grid-template-rows: auto;
+  gap: clamp(8px, 1.5vw, 22px);
+  align-items: start;
+  padding: clamp(14px, 2vw, 28px);
+  overflow: visible;
+  transition: grid-template-columns 320ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.spirit-testament {
+  min-width: 0;
+  transition: opacity 360ms ease;
+}
+
+.spirit-testament__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 3px clamp(8px, 1.8vw, 24px) 25px;
+}
+
+.spirit-book-slot {
+  position: relative;
+  z-index: var(--stack-index);
+  margin-top: -17px;
+}
+
+.spirit-book-slot:first-child {
+  margin-top: 0;
+}
+
+.spirit-book {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid rgb(255 255 255 / 17%);
+  border-radius: 5px;
+  background: linear-gradient(145deg, rgb(55 59 75 / 98%), rgb(31 34 46 / 99%));
+  box-shadow: 0 7px 16px rgb(0 0 0 / 28%);
+  color: #f7f5f0;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 280ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.spirit-testament--old .spirit-book {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.spirit-book:first-child {
+  margin-top: 0;
+}
+
+.spirit-book__name {
+  font-size: clamp(.9rem, 1.15vw, 1.08rem);
+  font-weight: 650;
+  transition: font-size 220ms ease, text-shadow 220ms ease;
+}
+
+.spirit-book.is-inactive {
+  filter: brightness(.58);
+  cursor: pointer;
+}
+
+.spirit-book.is-inactive:hover {
+  border-color: rgb(255 255 255 / 17%);
+  background: linear-gradient(145deg, rgb(55 59 75 / 98%), rgb(31 34 46 / 99%));
+  box-shadow: 0 7px 16px rgb(0 0 0 / 28%);
+  transform: none;
+}
+
+.spirit-book-slot:hover > .spirit-book:not(.is-inactive),
+.spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) {
+  border-color: var(--book-highlight);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--book-highlight) 34%, #393747),
+    #393747
+  );
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--book-highlight) 48%, transparent),
+    0 0 26px color-mix(in srgb, var(--book-highlight) 36%, transparent),
+    0 13px 30px rgb(0 0 0 / 45%);
+  transform: translateX(50%);
+}
+
+.spirit-testament--new .spirit-book-slot:hover > .spirit-book:not(.is-inactive),
+.spirit-testament--new .spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) {
+  transform: translateX(-50%);
+}
+
+.spirit-book-slot:hover > .spirit-book:not(.is-inactive) .spirit-book__name,
+.spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) .spirit-book__name {
+  font-size: clamp(1.53rem, 1.955vw, 1.836rem);
+  text-shadow:
+    0 0 8px color-mix(in srgb, var(--book-highlight) 85%, transparent),
+    0 0 18px color-mix(in srgb, var(--book-highlight) 55%, transparent);
+}
+
+.spirit-book:focus-visible,
+.spirit-reader__back:focus-visible,
+.spirit-chapter-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.spirit-page.has-selection {
+  grid-template-columns: minmax(220px, .7fr) minmax(0, 2.6fr) minmax(220px, .7fr);
+}
+
+.spirit-welcome {
+  align-self: center;
+  padding: clamp(18px, 3vw, 40px);
+  text-align: center;
+}
+
+.spirit-welcome__eyebrow {
+  margin: 0 0 12px;
+  color: #e8c99a;
+  font-size: .7rem;
+  font-weight: 650;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.spirit-welcome h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+  letter-spacing: -.07em;
+}
+
+.spirit-welcome p:last-child {
+  margin: 16px 0 0;
+  color: rgb(255 255 255 / 68%);
+}
+
+.spirit-page.has-selection .spirit-welcome {
+  display: none;
+}
+
+.spirit-reader {
+  z-index: 2;
+  min-width: 0;
+  align-self: start;
+  overflow: visible;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(232 201 154 / 12%), transparent 58%),
+    linear-gradient(145deg, rgb(34 37 50 / 98%), rgb(23 25 34 / 99%));
+  box-shadow: 0 24px 70px rgb(0 0 0 / 50%);
+  animation: spirit-reader-enter 340ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.spirit-reader[hidden] {
+  display: none;
+}
+
+.spirit-reader__header {
+  display: grid;
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px 18px;
+  padding: clamp(16px, 2vw, 25px);
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+
+.spirit-reader__heading {
+  min-width: 0;
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.spirit-reader__title {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  letter-spacing: -.04em;
+  text-shadow: 0 0 10px rgb(232 201 154 / 58%), 0 0 24px rgb(232 201 154 / 32%);
+  text-align: center;
+}
+
+.spirit-reader__back {
+  position: absolute;
+  top: clamp(16px, 2vw, 25px);
+  right: clamp(16px, 2vw, 25px);
+  align-self: start;
+  padding: 8px 11px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 7%);
+  color: #f7f5f0;
+  cursor: pointer;
+  font-size: .78rem;
+}
+
+.spirit-reader__back:hover {
+  background: rgb(255 255 255 / 14%);
+}
+
+.spirit-chapters {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 6px;
+  height: auto;
+  overflow: visible;
+  padding: 2px 3px;
+}
+
+.spirit-chapters.is-collapsed {
+  height: 40px;
+  max-height: 40px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: height 220ms ease, max-height 220ms ease;
+}
+
+.spirit-chapters:not(.is-collapsed) {
+  transition: height 220ms ease, max-height 220ms ease;
+}
+
+.spirit-chapters-expand {
+  position: relative;
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(160px, 60%);
+  height: 32px;
+  margin: -16px 0 -18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.spirit-chapters-expand::before {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 42px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 38%);
+  content: "";
+  transform: translateX(-50%);
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.spirit-chapters-expand:hover::before,
+.spirit-chapters-expand:focus-visible::before {
+  width: 64px;
+  background: #e8c99a;
+}
+
+.spirit-chapters-expand:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.spirit-chapters-expand[hidden] {
+  display: none;
+}
+
+.spirit-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.spirit-chapter-button {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 5%);
+  color: rgb(255 255 255 / 77%);
+  cursor: pointer;
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.spirit-chapter-button:hover {
+  transform: translateY(-2px);
+}
+
+.spirit-chapter-button[aria-pressed="true"] {
+  border-color: #e8c99a;
+  background: #e8c99a;
+  box-shadow: 0 4px 14px rgb(232 201 154 / 28%);
+  color: #171922;
+  font-weight: 750;
+  transform: scale(1.08);
+}
+
+.spirit-scripture {
+  padding: clamp(20px, 3vw, 40px);
+}
+
+.spirit-scripture[hidden] {
+  display: none;
+}
+
+.spirit-scripture__status {
+  margin: 0 0 22px;
+  color: #e8c99a;
+  font-size: .82rem;
+  letter-spacing: .04em;
+  text-align: center;
+}
+
+.spirit-scripture__verses {
+  max-width: 72ch;
+  margin: 0 auto;
+  color: rgb(255 255 255 / 88%);
+  font-size: clamp(.95rem, 1.4vw, 1.1rem);
+  line-height: 1.9;
+}
+
+.spirit-verse {
+  margin: 0 0 12px;
+  white-space: pre-line;
+}
+
+.spirit-verse__number {
+  display: inline-block;
+  min-width: 2.2em;
+  color: #e8c99a;
+  font-size: .72em;
+  font-variant-numeric: tabular-nums;
+  vertical-align: baseline;
+}
+
+.spirit-scripture__attribution {
+  margin: 28px 0 0;
+  color: rgb(255 255 255 / 48%);
+  font-size: .72rem;
+  text-align: center;
+}
+
+.spirit-scripture__attribution a {
+  color: inherit;
+}
+
+@keyframes spirit-reader-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  .spirit-page,
+  .spirit-page.has-selection {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "old new"
+      "reader reader";
+    gap: 8px;
+    padding: 10px;
+    overflow: auto;
+  }
+
+  .spirit-testament--old { grid-area: old; }
+  .spirit-testament--new { grid-area: new; }
+
+  .spirit-welcome,
+  .spirit-reader {
+    grid-area: reader;
+  }
+
+  .spirit-testament {
+    min-width: 0;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 6px;
+    background: rgb(0 0 0 / 12%);
+  }
+
+  .spirit-testament__stack {
+    padding: 2px 8px 14px;
+  }
+
+  .spirit-book {
+    min-height: 44px;
+    padding: 9px;
+  }
+
+  .spirit-book-slot {
+    margin-top: -12px;
+  }
+
+  .spirit-book__name {
+    font-size: .82rem;
+  }
+
+  .spirit-book-slot:hover > .spirit-book:not(.is-inactive) .spirit-book__name,
+  .spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) .spirit-book__name {
+    font-size: 1.394rem;
+  }
+
+  .spirit-book-slot:hover > .spirit-book:not(.is-inactive),
+  .spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) {
+    transform: translateX(14%);
+  }
+
+  .spirit-testament--new .spirit-book-slot:hover > .spirit-book:not(.is-inactive),
+  .spirit-testament--new .spirit-book-slot:focus-within > .spirit-book:not(.is-inactive) {
+    transform: translateX(-14%);
+  }
+
+  .spirit-reader {
+    grid-area: reader;
+    align-self: start;
+    max-height: none;
+  }
+
+  .spirit-reader__header {
+    gap: 10px;
+    padding: 14px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spirit-page,
+  .spirit-testament,
+  .spirit-book,
+  .spirit-reader,
+  .spirit-chapter-button {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+

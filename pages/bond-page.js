@@ -60,6 +60,9 @@ const periodicElements = [
   ["Mc", "Moscovium", "metal", 5], ["Lv", "Livermorium", "metal", 6],
   ["Ts", "Tennessine", "metalloid", 7], ["Og", "Oganesson", "noble gas", 8]
 ];
+const elementDetailsBySymbol = new Map(
+  periodicElements.map(([symbol, name, type]) => [symbol, { symbol, name, type }])
+);
 
 // Keep lesson copy distinct while sharing the same element-selection and result interface.
 const bondLessons = {
@@ -83,6 +86,7 @@ const bondLessons = {
 const bondType = document.body.dataset.bond;
 const lesson = bondLessons[bondType];
 const outcomeDirectory = window.bondOutcomeDirectory;
+const commonNamePrefix = "a.k.a.";
 if (!lesson || !outcomeDirectory?.[bondType]) {
   throw new Error(`Missing bond lesson data for "${bondType}".`);
 }
@@ -143,7 +147,25 @@ picker.className = "bond-periodic-table";
 picker.id = "bond-picker";
 picker.setAttribute("aria-label", "Interactive periodic table");
 tableWrap.append(picker);
-tableSection.append(selectionSummary, tableWrap);
+const elementLegend = document.createElement("aside");
+elementLegend.className = "element-legend";
+elementLegend.id = "element-legend";
+elementLegend.setAttribute("aria-label", "Element categories");
+[
+  ["metal", "Metal"],
+  ["nonmetal", "Nonmetal"],
+  ["metalloid", "Metalloid"],
+  ["noble-gas", "Noble gas"]
+].forEach(([category, name]) => {
+  const item = document.createElement("span");
+  item.className = "element-legend__item";
+  const swatch = document.createElement("span");
+  swatch.className = `element-legend__swatch bond-element--${category}`;
+  swatch.setAttribute("aria-hidden", "true");
+  item.append(swatch, document.createTextNode(name));
+  elementLegend.append(item);
+});
+tableSection.append(selectionSummary, tableWrap, elementLegend);
 
 const outcomesSection = document.createElement("section");
 outcomesSection.className = "bond-outcomes";
@@ -167,13 +189,12 @@ productTitle.className = "bond-product__title";
 const productName = document.createElement("div");
 productName.className = "bond-product__name";
 productName.append(productTitle);
-const productAlias = document.createElement("span");
-productAlias.className = "bond-product__alias";
-productAlias.hidden = true;
-productName.append(productAlias);
+const productCommonName = document.createElement("span");
+productCommonName.className = "bond-product__alias";
+productCommonName.hidden = true;
+productName.append(productCommonName);
 const productDescription = document.createElement("p");
 productDescription.className = "bond-product__description";
-productArticle.append(productEyebrow, productName, productDescription);
 const structurePanel = document.createElement("aside");
 structurePanel.className = "bond-structure";
 const structureHeading = document.createElement("h2");
@@ -183,7 +204,51 @@ structureDrawing.className = "bond-structure__drawing";
 structureDrawing.setAttribute("role", "img");
 structurePanel.append(structureHeading, structureDrawing);
 productLayout.append(productArticle, structurePanel);
+const productElementButtons = document.createElement("div");
+productElementButtons.className = "bond-product-elements__buttons";
+productElementButtons.setAttribute("aria-label", "Elements in the selected outcome");
+const elementPreview = document.createElement("div");
+elementPreview.className = "bond-element-preview";
+elementPreview.hidden = true;
+elementPreview.setAttribute("aria-live", "polite");
+elementPreview.setAttribute("aria-label", "Element details");
+const elementPreviewSymbol = document.createElement("p");
+elementPreviewSymbol.className = "bond-element-preview__symbol";
+const elementPreviewName = document.createElement("h2");
+elementPreviewName.className = "bond-element-preview__name";
+elementPreview.append(elementPreviewSymbol, elementPreviewName);
+productArticle.append(productEyebrow, productName, productElementButtons, elementPreview, productDescription);
 main.append(introduction, tableSection, outcomesSection, productLayout);
+
+function showElementPreview(element, button) {
+  const elementTints = {
+    metal: "#c4aa91",
+    nonmetal: "#70b7e5",
+    metalloid: "#65c6ae",
+    "noble gas": "#a88be0"
+  };
+  elementPreviewSymbol.textContent = element.symbol;
+  elementPreviewName.textContent = element.name;
+  elementPreview.style.setProperty("--element-tint", elementTints[element.type] || "#aab0ba");
+  elementPreview.hidden = false;
+  const articleRect = productArticle.getBoundingClientRect();
+  const buttonRect = button.getBoundingClientRect();
+  const previewRect = elementPreview.getBoundingClientRect();
+  const left = Math.min(
+    Math.max(0, buttonRect.left - articleRect.left - productArticle.clientLeft),
+    productArticle.clientWidth - previewRect.width
+  );
+  const top = buttonRect.top - articleRect.top - productArticle.clientTop - previewRect.height - 8;
+  elementPreview.style.left = `${left}px`;
+  elementPreview.style.top = `${top}px`;
+}
+
+productArticle.addEventListener("pointerleave", () => {
+  elementPreview.hidden = true;
+});
+productElementButtons.addEventListener("focusout", (event) => {
+  if (!productElementButtons.contains(event.relatedTarget)) elementPreview.hidden = true;
+});
 
 // Return catalog entries whose unique symbol sets contain every selected element.
 function getMatchingOutcomes() {
@@ -255,7 +320,8 @@ function renderOutcomes() {
     button.type = "button";
     button.textContent = outcome.formula;
     button.style.setProperty("--outcome-color", palette[index % palette.length]);
-    button.setAttribute("aria-label", `${outcome.formula}, ${outcome.name}${outcome.alias ? `, ${outcome.alias}` : ""}`);
+    const commonName = outcome.commonName ? `, ${commonNamePrefix} ${outcome.commonName}` : "";
+    button.setAttribute("aria-label", `${outcome.formula}, ${outcome.name}${commonName}`);
     button.addEventListener("click", () => showOutcome(outcome, button));
     outcomeButtons.append(button);
   });
@@ -311,11 +377,33 @@ function createSvgNode(tag, attributes = {}, text = "") {
 function showOutcome(outcome, activeButton) {
   productLayout.hidden = false;
   productTitle.textContent = outcome.name;
-  productAlias.textContent = outcome.alias || "";
-  productAlias.hidden = !outcome.alias;
+  productCommonName.textContent = outcome.commonName
+    ? `${commonNamePrefix} ${outcome.commonName}`
+    : "";
+  productCommonName.hidden = !outcome.commonName;
   productDescription.textContent = outcome.description;
   outcomeButtons.querySelectorAll(".bond-outcome").forEach((button) => {
     button.setAttribute("aria-pressed", String(button === activeButton));
+  });
+  elementPreview.hidden = true;
+  productElementButtons.replaceChildren();
+  outcome.symbols.filter((symbol) => symbol !== "*").forEach((symbol) => {
+    const element = elementDetailsBySymbol.get(symbol);
+    if (!element) {
+      console.warn(`No element details configured for outcome symbol "${symbol}".`);
+      return;
+    }
+
+    const button = document.createElement("button");
+    button.className = "bond-outcome bond-product-elements__button";
+    button.type = "button";
+    button.textContent = element.symbol;
+    button.setAttribute("aria-label", `${element.symbol}, ${element.name}`);
+    button.title = `${element.symbol} · ${element.name}`;
+    button.addEventListener("pointerenter", () => showElementPreview(element, button));
+    button.addEventListener("focus", () => showElementPreview(element, button));
+    button.addEventListener("click", () => showElementPreview(element, button));
+    productElementButtons.append(button);
   });
   structurePanel.replaceChildren(structureHeading, structureDrawing);
   structureDrawing.setAttribute("aria-label", `Structure diagram for ${outcome.name}`);

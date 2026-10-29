@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Stay curious and discover what is waiting around the corner.">
     <title>Wonder — Stay curious</title>
-    <!-- The shared stylesheet keeps this independent page aligned with the other card pages. -->
-    <link rel="stylesheet" href="card-page.css">
+    <!-- Shared styles define the card layout; the local sheet assigns Wonder's artwork accent. -->
+    <link rel="stylesheet" href="shared/card-page.css">
+    <link rel="stylesheet" href="wonder/wonder.css">
   </head>
   <body data-page="wonder">
     <!-- Wonder content elaborates on the card's invitation to explore. -->
@@ -20,6 +21,6 @@
       <div class="card-page__art" aria-hidden="true">✳</div>
     </main>
     <!-- Shared keyboard handler keeps the enclosing dialog dismissible and keyboard-trapped. -->
-    <script src="card-page.js"></script>
+    <script src="shared/card-page.js"></script>
   </body>
 </html>

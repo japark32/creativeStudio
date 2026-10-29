@@ -1,25 +1,58 @@
-<!-- Dream page: expands the second card into a quiet moment about imagination and rest. -->
+<!-- Spirit page: offers an interactive Old and New Testament book browser with chapter navigation. -->
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Standalone metadata allows direct navigation as well as display in the landing-page dialog. -->
+    <!-- Metadata supports direct navigation and responsive display inside the landing-page dialog. -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Find your rhythm and dream at your own pace.">
-    <title>Dream — Find your rhythm</title>
-    <!-- Reuse the shared card-page design for consistent typography and responsive spacing. -->
-    <link rel="stylesheet" href="card-page.css">
+    <meta name="description" content="Explore the books and chapters of the Old and New Testaments.">
+    <title>Spirit — Words of wisdom</title>
+    <!-- Shared styles set the base theme; the local sheet defines the book stacks and chapter reader. -->
+    <link rel="stylesheet" href="shared/card-page.css">
+    <link rel="stylesheet" href="dream/dream.css">
   </head>
   <body data-page="dream">
-    <!-- Dream content expands the second card's sample into a short, reflective message. -->
-    <main class="card-page">
-      <p class="card-page__eyebrow">02 / Dream</p>
-      <h1>Find your rhythm</h1>
-      <p class="card-page__lead">Take it one moment at a time. Let the day slow down enough for an idea to take shape, then follow it wherever it leads.</p>
-      <hr class="card-page__rule">
-      <div class="card-page__art" aria-hidden="true">☾</div>
+    <!-- The two side stacks flank a chapter reader that opens when a book is selected. -->
+    <main class="spirit-page" id="spirit-page">
+      <!-- Each testament pane contains an accessible, layered stack of book buttons. -->
+      <aside class="spirit-testament spirit-testament--old" aria-label="Old Testament books">
+        <div class="spirit-testament__stack" id="old-testament-books"></div>
+      </aside>
+
+      <!-- A calm center prompt fills the reader position until a book is chosen. -->
+      <section class="spirit-welcome" aria-label="Words of wisdom">
+        <p class="spirit-welcome__eyebrow">02 / Spirit</p>
+        <h2>Words of wisdom</h2>
+        <p>Ponder upon the goodness</p>
+      </section>
+
+      <!-- The reader header identifies the selected book and provides every chapter button. -->
+      <section class="spirit-reader" id="spirit-reader" aria-labelledby="reader-title" hidden>
+        <header class="spirit-reader__header">
+          <div class="spirit-reader__heading">
+            <h2 class="spirit-reader__title" id="reader-title" aria-live="polite"></h2>
+          </div>
+          <button class="spirit-reader__back" id="reader-back" type="button">All books</button>
+          <nav class="spirit-chapters" id="chapter-buttons" aria-label="Book chapters"></nav>
+          <button class="spirit-chapters-expand" id="chapters-expand" type="button" aria-controls="chapter-buttons" aria-expanded="true" hidden>
+            <span class="spirit-visually-hidden">Expand all chapters</span>
+          </button>
+        </header>
+        <section class="spirit-scripture" id="scripture" aria-labelledby="reader-title" aria-busy="false" hidden>
+          <p class="spirit-scripture__status" id="scripture-status" role="status" aria-live="polite"></p>
+          <div class="spirit-scripture__verses" id="scripture-verses"></div>
+          <p class="spirit-scripture__attribution">World English Bible (WEB), public domain. Text via <a href="https://bible-api.com/" target="_blank" rel="noopener noreferrer">Bible API</a>.</p>
+        </section>
+      </section>
+
+      <!-- The New Testament mirrors the Old Testament stack on the opposite side. -->
+      <aside class="spirit-testament spirit-testament--new" aria-label="New Testament books">
+        <div class="spirit-testament__stack" id="new-testament-books"></div>
+      </aside>
     </main>
-    <!-- Shared keyboard handler keeps the enclosing dialog dismissible and keyboard-trapped. -->
-    <script src="card-page.js"></script>
+    <!-- This script supplies book/chapter data and the stack, hover-preview, and reader interactions. -->
+    <script src="dream/dream.js"></script>
+    <!-- Shared keyboard support keeps the enclosing dialog dismissible and keyboard-trapped. -->
+    <script src="shared/card-page.js"></script>
   </body>
 </html>

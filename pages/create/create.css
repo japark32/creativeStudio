@@ -1,0 +1,4 @@
+/* Create card styles retain the existing shared warm illustration accent. */
+body[data-page="create"] {
+  --card-page-art-accent: #e8c99a;
+}
