@@ -1,0 +1,4 @@
+/* Wonder card styles retain the existing shared warm illustration accent. */
+body[data-page="wonder"] {
+  --card-page-art-accent: #e8c99a;
+}
